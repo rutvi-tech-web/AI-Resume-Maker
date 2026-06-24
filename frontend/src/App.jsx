@@ -163,7 +163,9 @@ y += summaryLines.length * 7;
 
   const generateSummary = async () => {
   try {
-    const response = await fetch("http://localhost:5000/summary", {
+    const response = await fetch(
+  `    ${import.meta.env.VITE_API_URL}/summary`,
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -190,26 +192,22 @@ y += summaryLines.length * 7;
 
   const recommendSkills = async () => {
   try {
-    const genAI = new GoogleGenerativeAI(
-      import.meta.env.VITE_GEMINI_API_KEY
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/skills`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          skills,
+        }),
+      }
     );
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
+    const data = await response.json();
 
-    const prompt = `
-      Based on these skills:
-      ${skills}
-
-      Suggest 10 additional resume skills.
-      Return only skill names separated by commas.
-    `;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-
-    setRecommendedSkills(response.text());
+    setRecommendedSkills(data.skills);
   } catch (error) {
     console.error(error);
     alert("Skill recommendation failed");

@@ -47,6 +47,35 @@ Return only one paragraph.
   }
 });
 
+app.post("/skills", async (req, res) => {
+  try {
+    const { skills } = req.body;
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+
+    const prompt = `
+Based on these skills:
+${skills}
+
+Suggest 10 additional resume skills.
+Return only skill names separated by commas.
+`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+
+    res.json({
+      skills: response.text(),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "Skill recommendation failed",
+    });
+  }
+});
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
