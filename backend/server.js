@@ -76,6 +76,11 @@ Return only skill names separated by commas.
     });
   }
 });
+
+app.get("/", (req, res) => {
+  res.send("AI Resume Maker Backend Running");
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
